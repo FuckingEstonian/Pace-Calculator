@@ -19,6 +19,8 @@ namespace RUN
 		void EditDataDistance();
 		void EditDataPace();
 		void EditDataTime();
+		void CalculateDistance();
+		void CalculatePace();
 	
 	};
 }

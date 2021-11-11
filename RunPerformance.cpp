@@ -15,7 +15,7 @@ namespace RUN
 	{
 		cout << "\n*Your Data:\n";
 		cout << "Distance:\t" << Data.distance;
-		
+
 		if (Data.distance == Distances::Marathon)
 		{
 			cout << "'Marathon'";
@@ -24,7 +24,7 @@ namespace RUN
 		{
 			cout << "'Half Marathon'";
 		}
-		cout << "\nPace:\t\t" << Data.pace[clock::min] << ':'<< Data.pace[clock::sec] << endl;
+		cout << "\nPace:\t\t" << Data.pace[clock::min] << ':' << Data.pace[clock::sec] << endl;
 		cout << "Time:\t\t" << Data.time[clock::hour] << ':' << Data.time[clock::min] << ':' << Data.time[clock::sec] << endl;
 	}
 	void RunPerformance::EditDataDistance()
@@ -33,7 +33,7 @@ namespace RUN
 		bool triger = false;
 		//this->PrintData();
 		cout << "\nChange Distance: " << Data.distance << "  to ";
-		
+
 		while (triger != true)
 		{
 			try
@@ -47,6 +47,7 @@ namespace RUN
 						triger = true;
 						row = row.substr(i, row.length() - i);
 						Data.distance = stod(row);
+						if (Data.distance < 0) Data.distance *= -1;
 						break;
 					}
 				}
@@ -63,7 +64,7 @@ namespace RUN
 					cout << "Wrong enter, try one more time: ";
 				}
 			}
-			catch(exception & ex)
+			catch (exception& ex)
 			{
 				cout << ex.what() << endl;
 				cout << "Program catched the exception!\n Repeat enter: ";
@@ -93,9 +94,13 @@ namespace RUN
 						Data.pace[clock::min] = stod(row.substr(0, point));
 						Data.pace[clock::sec] = stod(row.substr(point + 1, row.size()));
 						if (Data.pace[clock::sec] < 10 && row[point + 1] != '0')Data.pace[clock::sec] *= 10;
+						for (short j = 0; j <= clock::min; j++)
+						{
+							if (Data.pace[j] < 0) Data.pace[j] *= -1;
+						}
 						triger = true;
 						break;
-						
+
 					}
 				}
 				if (triger != true) cout << "-Wrong enter try one more time: ";
@@ -108,7 +113,7 @@ namespace RUN
 				}
 
 			}
-			catch(exception & ex)
+			catch (exception& ex)
 			{
 				cout << ex.what() << endl;
 				cout << "-Wrong enter try one more time: ";
@@ -133,11 +138,15 @@ namespace RUN
 				{
 					//cout << itwo << " - " << row[itwo] << endl;
 					if ((row[itwo] == ':' || row[itwo] == '.' || row[itwo] == '/') && ione == 0 && itwo < 3) ione = itwo;
-					if (ione != 0 && (row[itwo] == ':'|| row[itwo] == '.' || row[itwo] == '/') && (itwo - ione) <= 3 && itwo > ione  && (row.size() - itwo) <= 3)          
+					if (ione != 0 && (row[itwo] == ':' || row[itwo] == '.' || row[itwo] == '/') && (itwo - ione) <= 3 && itwo > ione && (row.size() - itwo) <= 3)
 					{
 						Data.time[clock::hour] = stod(row.substr(0, ione));
 						Data.time[clock::min] = stod(row.substr(ione + 1, itwo - 2));
 						Data.time[clock::sec] = stod(row.substr(itwo + 1, itwo + 1));
+						for (short j = 0; j <= clock::hour; j++)
+						{
+							if (Data.time[j] < 0) Data.time[j] *= -1;
+						}
 						//if (Data.time[clock::min] < 10 && row[point + 1] != '0')Data.pace[clock::sec] *= 10;
 						//if (Data.time[clock::sec] < 10 && row[point + 1] != '0')Data.pace[clock::sec] *= 10;
 						triger = true;
@@ -161,8 +170,54 @@ namespace RUN
 
 		}
 
-		//write limites for pace and correct data for time!
 	}
 
+	void RunPerformance::CalculateDistance()
+	{
 
+		try
+		{
+			if (Data.pace[clock::min] == 0 || (Data.time[clock::hour] == 0 && Data.time[clock::min] == 0))
+			{
+				throw exception("Nod relevant data in fields 'Time' and 'Pace'");
+			}
+
+			Data.distance = ((Data.time[clock::hour] * Clocks::Hour) + (Data.time[clock::min] * Clocks::Minute) + Data.time[clock::sec])
+				/ ((Data.pace[clock::min] * Clocks::Minute) + Data.pace[clock::sec]);
+
+		}
+		catch (const exception& ex)
+		{
+			cout << ex.what();
+			cout << "\nCalcDistance exception!" << endl;
+		}
+
+	}
+
+	void RunPerformance::CalculatePace()
+	{
+		short first, second;
+		try
+		{
+			if (Data.distance == 0 || (Data.time[clock::hour] == 0 && Data.time[clock::min] == 0))
+			{
+				throw exception("Nod relevant data in fields 'Time' and 'Distance'");
+			}
+
+			first = (((Data.time[clock::hour] * Clocks::Hour) + (Data.time[clock::min] * Clocks::Minute) + Data.time[clock::sec])
+				/ Data.distance) / Clocks::Minute;
+
+			second = (int)(((Data.time[clock::hour] * Clocks::Hour) + (Data.time[clock::min] * Clocks::Minute) + Data.time[clock::sec])
+				/ Data.distance) % (int)Clocks::Minute;
+
+			Data.pace[clock::min] = first;
+			Data.pace[clock::sec] = second;
+
+		}
+		catch (const std::exception& ex)
+		{
+			cout << ex.what();
+			cout << "\CalcPace exception!" << endl;
+		}
+	}
 }
