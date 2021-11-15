@@ -27,6 +27,49 @@ namespace RUN
 		cout << "\nPace:\t\t" << Data.pace[clock::min] << ':' << Data.pace[clock::sec] << endl;
 		cout << "Time:\t\t" << Data.time[clock::hour] << ':' << Data.time[clock::min] << ':' << Data.time[clock::sec] << endl;
 	}
+
+	void RunPerformance::MainMenu()
+	{
+		bool triger = false;
+		string kword = "Nothing";
+		while (kword != "exit")
+		{
+			cout << "\nTo see commands:\t command" << endl;
+			this->PrintData();
+			
+			cin >> kword;
+			system("cls");
+
+			if (kword == "command")
+			{
+				cout << "\nTo see info:\t\t Info";
+				cout << "\nTo see race data:\t Data" << endl;
+
+				cout << "\nTo edit distance:\t EDist";
+				cout << "\nTo edit pace:\t\t EPace";
+				cout << "\nTo edit time:\t\t ETime";
+
+				cout << "\n\nTo calculate distance:\t CDist";
+				cout << "\nTo calculate pace:\t CPace";
+				cout << "\nTo calculate time:\t CTime";
+				triger = true;
+			}
+
+			if (kword == "Info") { this->Info(); triger = true; }
+			if (kword == "Data") { this->PrintData(); triger = true; }
+			if (kword == "EDist") { this->EditDataDistance(); triger = true; }
+			if (kword == "EPace") { this->EditDataPace(); triger = true; }
+			if (kword == "ETime") { this->EditDataTime(); triger = true; }
+			if (kword == "CDist") { this->CalculateDistance(); triger = true; }
+			if (kword == "CPace") { this->CalculatePace(); triger = true; }
+			if (kword == "CTime") { this->CalculateTime(); triger = true; }
+
+			if (triger != true) cout << "\nInvalid enter, try one more time." << endl;
+			triger = false;
+		}
+	}
+
+
 	void RunPerformance::EditDataDistance()
 	{
 		string row;
@@ -212,6 +255,30 @@ namespace RUN
 
 			Data.pace[clock::min] = first;
 			Data.pace[clock::sec] = second;
+
+		}
+		catch (const std::exception& ex)
+		{
+			cout << ex.what();
+			cout << "\CalcPace exception!" << endl;
+		}
+	}
+
+	void RunPerformance::CalculateTime()
+	{
+		short first, second, third;
+
+		try
+		{
+
+			if (Data.distance == 0 || (Data.pace[clock::min] == 0 && Data.pace[clock::sec] == 0))
+			{
+				throw exception("Nod relevant data in fields 'Pace' and 'Distance'");
+			}
+
+			Data.time[clock::hour] =(short)((short)(((Data.pace[clock::min] * Clocks::Minute) + Data.pace[clock::sec]) * Data.distance) / Clocks::Hour);
+			Data.time[clock::min] = (short)(((short)(((Data.pace[clock::min] * Clocks::Minute) + Data.pace[clock::sec]) * Data.distance) % (short)Clocks::Hour) / (short)Clocks::Minute);
+			Data.time[clock::sec] = (short)(((short)(((Data.pace[clock::min] * Clocks::Minute) + Data.pace[clock::sec]) * Data.distance) % (short)Clocks::Hour) % (short)Clocks::Minute);
 
 		}
 		catch (const std::exception& ex)

@@ -7,16 +7,17 @@ using namespace RUN;
 int main()
 {
     RunPerformance Athlete;
-    Athlete.Info();
+   /* Athlete.Info();
     Athlete.PrintData();
 
-    Athlete.EditDataTime();
+    Athlete.EditDataPace();
     Athlete.EditDataDistance();
-    Athlete.CalculatePace();
+    Athlete.CalculateTime();
     
-    Athlete.PrintData();
+    Athlete.PrintData();*/
+    Athlete.MainMenu();
     system("pause");
 
     // HELLO I'M HERE!
-    // next step -> time calc and so on...
+    
 }

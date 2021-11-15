@@ -16,11 +16,15 @@ namespace RUN
 
 		void Info();
 		void PrintData();
+		void MainMenu();
+
 		void EditDataDistance();
 		void EditDataPace();
 		void EditDataTime();
+
 		void CalculateDistance();
 		void CalculatePace();
+		void CalculateTime();
 	
 	};
 }
