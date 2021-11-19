@@ -287,4 +287,81 @@ namespace RUN
 			cout << "\CalcPace exception!" << endl;
 		}
 	}
+
+	bool RunPerformance::Check()
+	{
+		if (Data.distance == 0 || (Data.pace[clock::min] == 0 && Data.pace[clock::sec] == 0)
+			|| (Data.time[clock::hour] == 0 && Data.time[clock::min] && Data.time[clock::sec] == 0))
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+
+	}
+
+	RunData& RunPerformance::list()
+	{
+		if (this->Check() != true)
+		{
+			cout << "List not created.\nNo relevant data!" << endl;
+			return;
+		}
+
+		short laps;
+
+		if (Data.distance == Distances::Marathon || Data.distance == Distances::HMarathon) laps = (short)Data.distance + 1;
+		else laps = (short)Data.distance;
+		// needs to write stuct which will use laps for constructor to create list of elements
+		// don't forget about destructor;
+
+		// use RunData to create linked list and use link on it to print it and save it
+
+		// create inheritance for RunData with exta fields
+		// - string (for remarks)
+		// - char	(for file input)
+		// - bool	(to track changes in table)
+		
+		RunDataTable Table(Data.distance,Data.pace[clock::min],Data.pace[clock::sec],Data.time[clock::hour], Data.time[clock::min], Data.time[clock::sec]);
+		RunDataTable* mark = & Table;
+		RunDataTable* nod = mark;
+		double TT, Th, Tm, Ts; // use this for time
+
+		for (short i = 1; i <= laps; i++)
+		{
+			TT = ((Data.pace[clock::min] * Clocks::Minute) + Data.pace[clock::sec]) * i;
+			//Th = (short)(TT / Clocks::Hour);
+			//Tm = (short)(TT / Clocks::Minute) - Th * Clocks::Minute;
+			//Ts = (short)((short)TT % (short)(TT / Clocks::Minute));
+			// for testing
+
+			mark->distance = i;
+			mark->pace[clock::min] = Data.pace[clock::min];
+			mark->pace[clock::sec] = Data.pace[clock::sec];
+			
+			if (mark->previous == NULL) // may be don't need
+			{ 
+				mark->time[clock::hour] = 0;
+				mark->time[clock::min] = Data.pace[clock::min];
+				mark->time[clock::sec] = Data.pace[clock::sec];
+			}
+			else
+			{
+				mark->time[clock::hour] = (short)(TT / Clocks::Hour);
+				mark->time[clock::min] = (short)(TT / Clocks::Minute) - Th * Clocks::Minute;
+				mark->time[clock::sec] = (short)((short)TT % (short)(TT / Clocks::Minute));
+			}
+
+			nod = new RunDataTable;
+			nod->previous = mark;
+			mark->next = nod;
+			mark = nod;
+
+
+		}
+
+	}
+
 }

@@ -25,6 +25,9 @@ namespace RUN
 		void CalculateDistance();
 		void CalculatePace();
 		void CalculateTime();
+
+		bool Check(); /// to check that all data is entered
+		RunData& list();
 	
 	};
 }
