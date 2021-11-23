@@ -15,6 +15,7 @@ int main()
     Athlete.CalculateTime();
     
     Athlete.PrintData();*/
+    
     Athlete.MainMenu();
     system("pause");
 

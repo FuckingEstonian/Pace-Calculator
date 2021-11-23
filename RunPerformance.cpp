@@ -52,6 +52,9 @@ namespace RUN
 				cout << "\n\nTo calculate distance:\t CDist";
 				cout << "\nTo calculate pace:\t CPace";
 				cout << "\nTo calculate time:\t CTime";
+
+				cout << "\nTo create lsist:\t List";
+
 				triger = true;
 			}
 
@@ -63,6 +66,7 @@ namespace RUN
 			if (kword == "CDist") { this->CalculateDistance(); triger = true; }
 			if (kword == "CPace") { this->CalculatePace(); triger = true; }
 			if (kword == "CTime") { this->CalculateTime(); triger = true; }
+			if (kword == "List") { this->ListHead(); triger = true; }
 
 			if (triger != true) cout << "\nInvalid enter, try one more time." << endl;
 			triger = false;
@@ -302,7 +306,7 @@ namespace RUN
 
 	}
 
-	RunData& RunPerformance::list()
+	void RunPerformance::ListHead()
 	{
 		if (this->Check() != true)
 		{
@@ -310,49 +314,51 @@ namespace RUN
 			return;
 		}
 
+		RunDataTable Link;
+		this->list(Link);
+
+		// create destructor...
+
+
+	}
+
+	RunDataTable& RunPerformance::list(RunDataTable & List)
+	{
+		
 		short laps;
 
 		if (Data.distance == Distances::Marathon || Data.distance == Distances::HMarathon) laps = (short)Data.distance + 1;
 		else laps = (short)Data.distance;
-		// needs to write stuct which will use laps for constructor to create list of elements
-		// don't forget about destructor;
-
-		// use RunData to create linked list and use link on it to print it and save it
-
-		// create inheritance for RunData with exta fields
-		// - string (for remarks)
-		// - char	(for file input)
-		// - bool	(to track changes in table)
 		
-		RunDataTable Table(Data.distance,Data.pace[clock::min],Data.pace[clock::sec],Data.time[clock::hour], Data.time[clock::min], Data.time[clock::sec]);
-		RunDataTable* mark = & Table;
+		RunDataTable* point = &List;
+		RunDataTable* mark = point;
 		RunDataTable* nod = mark;
-		double TT, Th, Tm, Ts; // use this for time
+		double TT;
+
+		cout << "Distance\tPace\t\tTime\n[km]\t\t[min/km]\t[h/m/s]" << endl;
 
 		for (short i = 1; i <= laps; i++)
 		{
 			TT = ((Data.pace[clock::min] * Clocks::Minute) + Data.pace[clock::sec]) * i;
-			//Th = (short)(TT / Clocks::Hour);
-			//Tm = (short)(TT / Clocks::Minute) - Th * Clocks::Minute;
-			//Ts = (short)((short)TT % (short)(TT / Clocks::Minute));
-			// for testing
-
+			
 			mark->distance = i;
 			mark->pace[clock::min] = Data.pace[clock::min];
 			mark->pace[clock::sec] = Data.pace[clock::sec];
 			
-			if (mark->previous == NULL) // may be don't need
-			{ 
-				mark->time[clock::hour] = 0;
-				mark->time[clock::min] = Data.pace[clock::min];
-				mark->time[clock::sec] = Data.pace[clock::sec];
-			}
-			else
-			{
-				mark->time[clock::hour] = (short)(TT / Clocks::Hour);
-				mark->time[clock::min] = (short)(TT / Clocks::Minute) - Th * Clocks::Minute;
-				mark->time[clock::sec] = (short)((short)TT % (short)(TT / Clocks::Minute));
-			}
+			mark->time[clock::hour] = (short)(TT / Clocks::Hour);
+			mark->time[clock::min] = (short)(TT / Clocks::Minute) - (short)(TT / Clocks::Hour) * Clocks::Minute;
+			mark->time[clock::sec] = ((short)TT % (short)Clocks::Minute);
+				
+				if(i == laps)
+				{ 
+					mark->time[clock::hour] = Data.time[clock::hour]; 
+					mark->time[clock::min] = Data.time[clock::min]; 
+					mark->time[clock::sec] = Data.time[clock::sec];
+				}
+
+			cout << "  " << mark->distance << "\t\t" << mark->pace[clock::min] << ":" << mark->pace[clock::sec] << "\t\t"
+				<< mark->time[clock::hour] << ":" << mark->time[clock::min] << ":" << mark->time[clock::sec] << endl;
+
 
 			nod = new RunDataTable;
 			nod->previous = mark;
@@ -361,6 +367,8 @@ namespace RUN
 
 
 		}
+
+		return List;
 
 	}
 

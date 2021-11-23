@@ -27,7 +27,8 @@ namespace RUN
 		void CalculateTime();
 
 		bool Check(); /// to check that all data is entered
-		RunData& list();
+		void ListHead();
+		RunDataTable& list(RunDataTable&);
 	
 	};
 }
