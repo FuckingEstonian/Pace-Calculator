@@ -264,13 +264,13 @@ namespace RUN
 		catch (const std::exception& ex)
 		{
 			cout << ex.what();
-			cout << "\CalcPace exception!" << endl;
+			cout << "CalcPace exception!" << endl;
 		}
 	}
 
 	void RunPerformance::CalculateTime()
 	{
-		short first, second, third;
+
 
 		try
 		{
@@ -288,14 +288,14 @@ namespace RUN
 		catch (const std::exception& ex)
 		{
 			cout << ex.what();
-			cout << "\CalcPace exception!" << endl;
+			cout << "CalcPace exception!" << endl;
 		}
 	}
 
 	bool RunPerformance::Check()
 	{
 		if (Data.distance == 0 || (Data.pace[clock::min] == 0 && Data.pace[clock::sec] == 0)
-			|| (Data.time[clock::hour] == 0 && Data.time[clock::min] && Data.time[clock::sec] == 0))
+			|| (Data.time[clock::hour] == 0 && Data.time[clock::min] == 0 && Data.time[clock::sec] == 0))
 		{
 			return false;
 		}
@@ -308,18 +308,26 @@ namespace RUN
 
 	void RunPerformance::ListHead()
 	{
+		
 		if (this->Check() != true)
 		{
 			cout << "List not created.\nNo relevant data!" << endl;
 			return;
 		}
-
+		//overload operation "==" for RunDataTable
 		RunDataTable Link;
 		this->list(Link);
+		
+		this->ListRecord(Link);
+		
 
-		// create destructor...
-
-
+		RunData* a = Link.next;
+		while (a->next != NULL) // destructor for linked list (RunData class must be improved )
+		{
+			RunData* b = a;
+			a = a->next;
+			delete b;
+		}
 	}
 
 	RunDataTable& RunPerformance::list(RunDataTable & List)
@@ -371,5 +379,39 @@ namespace RUN
 		return List;
 
 	}
+
+	void RunPerformance::ListRecord(RunDataTable& List)
+	{
+		char decision;
+		string FileName;
+		RunData* point = & List;
+		
+		cout << "Do you want to save list?\tY / N" << endl;
+		cin >> decision;
+
+		while (decision != 'Y' && decision != 'y' && decision != 'D' && decision != 'd')
+		{
+			cout << "Wrong enter, repeat it please!" << endl;
+			cin >> decision;
+		}
+
+		if (decision == 'N' || decision == 'n') return;
+
+		cout << "Enter file name:";
+		cin >> FileName;
+		FileName += ".txt";
+
+		ofstream fout(FileName);
+		
+		while (point->next != NULL)
+		{
+			fout << point->distance << "\t" << point->pace[clock::min] << "\t" << point->pace[clock::sec]
+				<< point->time[clock::hour] << "\t" << point->time[clock::min]<< "\t" << point->time[clock::sec] << "\t" << endl;
+			point = point->next;
+		}
+
+	}
+
+
 
 }

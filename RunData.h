@@ -20,7 +20,7 @@ public:
 
 	RunData(double Distance = 0, double PaceM = 0, double PaceS = 0, double TimeH = 0, double TimeM = 0, double TimeS = 0)
 		:distance(Distance), pace{ PaceM,PaceS }, time { TimeH,TimeM,TimeS }, next(NULL), previous(NULL) {};
-	~RunData() { cout << "Destructor for Data" << endl; };
+	//~RunData() { cout << "Destructor for Data" << endl; };
 };
 
 class RunDataTable : public RunData

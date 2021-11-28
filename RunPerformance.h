@@ -2,6 +2,7 @@
 #include <sstream>
 #include"RunData.h"
 #include "Constants.h"
+#include <fstream>
 namespace RUN
 {
 	class RunPerformance
@@ -12,7 +13,7 @@ namespace RUN
 		 
 	public:
 		 //RunPerformance ();
-		~RunPerformance() { cout << "Destructor for User" << endl; };
+		//~RunPerformance() { cout << "Destructor for User" << endl; };
 
 		void Info();
 		void PrintData();
@@ -28,7 +29,8 @@ namespace RUN
 
 		bool Check(); /// to check that all data is entered
 		void ListHead();
+		void ListRecord(RunDataTable&);
 		RunDataTable& list(RunDataTable&);
-	
+		
 	};
 }
