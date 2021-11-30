@@ -317,9 +317,8 @@ namespace RUN
 		//overload operation "==" for RunDataTable
 		RunDataTable Link;
 		this->list(Link);
-		
+		this->EditList(Link);
 		this->ListRecord(Link);
-		
 
 		RunData* a = Link.next;
 		while (a->next != NULL) // destructor for linked list (RunData class must be improved )
@@ -389,7 +388,7 @@ namespace RUN
 		cout << "Do you want to save list?\tY / N" << endl;
 		cin >> decision;
 
-		while (decision != 'Y' && decision != 'y' && decision != 'D' && decision != 'd')
+		while (decision != 'Y' && decision != 'y' && decision != 'N' && decision != 'n')
 		{
 			cout << "Wrong enter, repeat it please!" << endl;
 			cin >> decision;
@@ -401,17 +400,211 @@ namespace RUN
 		cin >> FileName;
 		FileName += ".txt";
 
-		ofstream fout(FileName);
-		
-		while (point->next != NULL)
+		try 
 		{
-			fout << point->distance << "\t" << point->pace[clock::min] << "\t" << point->pace[clock::sec]
-				<< point->time[clock::hour] << "\t" << point->time[clock::min]<< "\t" << point->time[clock::sec] << "\t" << endl;
-			point = point->next;
+			ofstream fout(FileName);
+
+			while (point->next != NULL)
+			{
+				fout << point->distance << "\t" << point->pace[clock::min] << "\t" << point->pace[clock::sec]
+					<< point->time[clock::hour] << "\t" << point->time[clock::min] << "\t" << point->time[clock::sec] << "\t" << endl;
+				point = point->next;
+			}
+		}
+		catch(exception& ex)
+		{
+			cout << ex.what() << endl;
+			cout << "EXCEPTION!\nproblems with file creation or file record." << endl;
 		}
 
 	}
 
 
+	void RunPerformance::EditList(RunDataTable& List)
+	{
+		char desicion1, desicion2;
+		RunData* point = &List;
+		RunData* cpoint = NULL;
+		
+		cout << "Do you want to Edit lis data?\t Y / N" << endl;
+		cin >> desicion1;
 
-}
+		while (desicion1 != 'Y' && desicion1 != 'y' && desicion1 != 'N' && desicion1 != 'n')
+		{
+			cout << "Wrong enter, repeat it please!" << endl;
+			cin >> desicion1;
+		}
+		if (desicion1 == 'N' || desicion1 == 'n') return;
+
+		cout << "Change time or pace?\t T / P\te - to go back;" << endl;
+		cin >> desicion2;
+
+		while (desicion2 != 'P' && desicion2 != 'p' && desicion1 != 'T' && desicion1 != 't' && desicion1 != 'e')
+		{
+			cout << "Wrong enter, repeat it please!" << endl;
+			cin >> desicion2;
+		}
+
+		switch (desicion2)
+		{
+		case 'T':
+		case 't':
+			//
+			break;
+		case 'P':
+		case 'p':
+		{
+			bool triger = false;
+			short km;
+
+			cout << "Enter kilometr:";
+			cin >> km;
+			while (cpoint == NULL)
+			{
+				while (point->next != NULL)
+				{
+					if (point->distance == km) cpoint = point;
+					point = point->next;
+				}
+				if (cpoint == NULL)
+				{
+					cout << "No relevant distance at list" << endl;
+					cin >> km;
+				}
+			}
+
+			this->EditDataPace(*cpoint);
+			this->PrintData(List);
+
+			break;
+		}
+		default:
+			return;
+		}
+
+
+	}
+
+	void RunPerformance::PrintData(RunData& list)
+	{
+
+		RunData* mark = &list;
+
+		cout << "Distance\tPace\t\tTime\n[km]\t\t[min/km]\t[h/m/s]" << endl;
+		while (mark->next != NULL)
+		{
+			cout << "  " << mark->distance << "\t\t" << mark->pace[clock::min] << ":" << mark->pace[clock::sec] << "\t\t"
+				<< mark->time[clock::hour] << ":" << mark->time[clock::min] << ":" << mark->time[clock::sec] << endl;
+			mark = mark->next;
+		}
+
+	}
+
+
+	void RunPerformance::EditDataPace(RunData& nod)
+	{
+
+		string row;
+		bool triger = false;
+		cout << "Change pace from " << nod.pace[clock::min] << ':' << nod.pace[clock::sec] << "  (min:sec): ";
+		while (triger == false)
+		{
+			try
+			{
+				cin >> row;
+				size_t i = 0;
+				size_t point = 0;
+				for (; i < row.size(); i++)
+				{
+					//cout << row[i] << i << endl;;
+					if ((row[i] == ':' || row[i] == '.' || row[i] == '/') && i < 3)
+					{
+						point = i;
+						nod.pace[clock::min] = stod(row.substr(0, point));
+						nod.pace[clock::sec] = stod(row.substr(point + 1, row.size()));
+						if (nod.pace[clock::sec] < 10 && row[point + 1] != '0')nod.pace[clock::sec] *= 10;
+						for (short j = 0; j <= clock::min; j++)
+						{
+							if (nod.pace[j] < 0) nod.pace[j] *= -1;
+						}
+						triger = true;
+						break;
+
+					}
+				}
+				if (triger != true) cout << "-Wrong enter try one more time: ";
+				if (nod.pace[clock::min] > Clocks::Minute || nod.pace[clock::sec] > Clocks::Minute)
+				{
+					triger = false;
+					nod.pace[clock::min] = 0;
+					nod.pace[clock::sec] = 0;
+					throw exception("Seconds or minutes biget then 60");
+				}
+
+			}
+			catch (exception& ex)
+			{
+				cout << ex.what() << endl;
+				cout << "-Wrong enter try one more time: ";
+			}
+		}
+
+		this->CalculateListData(nod);
+	}
+
+	void RunPerformance::CalculateListData(RunData& nod) // need to be improved!
+	{
+		RunData* pool = &nod;
+
+		short temp = (int)((pool->previous->time[clock::hour] * Clocks::Hour)
+			+ (pool->previous->time[clock::min] * Clocks::Minute)
+			+ (pool->previous->time[clock::sec])
+			+ (pool->pace[clock::min] * Clocks::Minute)
+			+ (pool->pace[clock::sec]));
+
+		short temp2 = ((int)((Data.time[clock::hour] * Clocks::Hour)
+			+ (Data.time[clock::min] * Clocks::Minute)
+			+ (Data.time[clock::sec])) - temp);
+		double iter = temp2 / (Data.distance - pool->distance  );
+
+			pool->time[clock::hour] = temp / (short)Clocks::Hour;
+			pool->time[clock::min] = (temp / (short)Clocks::Minute) % (short)Clocks::Minute;
+			pool->time[clock::sec] = temp % (short)Clocks::Minute;
+			pool = pool->next;
+
+			short dd = Data.distance;
+			if (Data.distance == Distances::Marathon || Data.distance == Distances::HMarathon) dd += 1;
+
+			while (pool != NULL)
+			{
+				pool->pace[clock::min] = (short)(iter / Clocks::Minute);
+				pool->pace[clock::sec] = ((short)iter % (short)Clocks::Minute);
+
+				short pemp = (int)((pool->previous->time[clock::hour] * Clocks::Hour)
+					+ (pool->previous->time[clock::min] * Clocks::Minute)
+					+ (pool->previous->time[clock::sec])
+					+ (pool->pace[clock::min] * Clocks::Minute)
+					+ (pool->pace[clock::sec]));
+
+				pool->time[clock::hour] = pemp / (short)Clocks::Hour;
+				pool->time[clock::min] = (pemp / (short)Clocks::Minute) % (short)Clocks::Minute;
+				pool->time[clock::sec] = pemp % (short)Clocks::Minute;
+
+				if (pool->distance == dd)
+				{
+					pool->time[clock::hour] = Data.time[clock::hour];
+					pool->time[clock::min] = Data.time[clock::min];
+					pool->time[clock::sec] = Data.time[clock::sec];
+					cout << pool->previous->distance << "\t" << pool->time[clock::min] << "\t" << pool->time[clock::sec] << "\t" << Data.time[clock::min] << "\t" << Data.time[clock::sec] << endl;
+				}
+
+				pool = pool->next;
+				
+			}
+		
+	}
+
+
+
+
+} // end.

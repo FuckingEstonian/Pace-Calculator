@@ -19,6 +19,6 @@ int main()
     Athlete.MainMenu();
     system("pause");
 
-    // create recording metod for list.
+   
     
 }

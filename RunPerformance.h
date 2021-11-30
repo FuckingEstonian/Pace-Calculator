@@ -21,16 +21,22 @@ namespace RUN
 
 		void EditDataDistance();
 		void EditDataPace();
+		void EditDataPace(RunData&);
 		void EditDataTime();
 
 		void CalculateDistance();
 		void CalculatePace();
 		void CalculateTime();
+		void CalculateListData(RunData&);
 
 		bool Check(); /// to check that all data is entered
 		void ListHead();
 		void ListRecord(RunDataTable&);
+		void EditList(RunDataTable&);
+		void PrintData(RunData&);
 		RunDataTable& list(RunDataTable&);
+
+
 		
 	};
 }
