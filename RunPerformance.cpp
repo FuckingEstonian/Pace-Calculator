@@ -422,67 +422,70 @@ namespace RUN
 
 	void RunPerformance::EditList(RunDataTable& List)
 	{
-		char desicion1, desicion2;
+		while (true)
+		{
+		char desicion1 = 'x', desicion2 = 'x';
 		RunData* point = &List;
 		RunData* cpoint = NULL;
 		
-		cout << "Do you want to Edit lis data?\t Y / N" << endl;
-		cin >> desicion1;
 
-		while (desicion1 != 'Y' && desicion1 != 'y' && desicion1 != 'N' && desicion1 != 'n')
-		{
-			cout << "Wrong enter, repeat it please!" << endl;
+			cout << "Do you want to Edit lis data?\t Y / N" << endl;
 			cin >> desicion1;
-		}
-		if (desicion1 == 'N' || desicion1 == 'n') return;
 
-		cout << "Change time or pace?\t T / P\te - to go back;" << endl;
-		cin >> desicion2;
-
-		while (desicion2 != 'P' && desicion2 != 'p' && desicion1 != 'T' && desicion1 != 't' && desicion1 != 'e')
-		{
-			cout << "Wrong enter, repeat it please!" << endl;
-			cin >> desicion2;
-		}
-
-		switch (desicion2)
-		{
-		case 'T':
-		case 't':
-			//
-			break;
-		case 'P':
-		case 'p':
-		{
-			bool triger = false;
-			short km;
-
-			cout << "Enter kilometr:";
-			cin >> km;
-			while (cpoint == NULL)
+			while (desicion1 != 'Y' && desicion1 != 'y' && desicion1 != 'N' && desicion1 != 'n')
 			{
-				while (point->next != NULL)
-				{
-					if (point->distance == km) cpoint = point;
-					point = point->next;
-				}
-				if (cpoint == NULL)
-				{
-					cout << "No relevant distance at list" << endl;
-					cin >> km;
-				}
+				cout << "Wrong enter, repeat it please!" << endl;
+				cin >> desicion1;
+			}
+			if (desicion1 == 'N' || desicion1 == 'n') return;
+
+			cout << "Change time or pace?\t T / P\te - to go back;" << endl;
+			cin >> desicion2;
+
+			while (desicion2 != 'P' && desicion2 != 'p' && desicion1 != 'T' && desicion1 != 't' && desicion1 != 'e')
+			{
+				cout << "Wrong enter, repeat it please!" << endl;
+				cin >> desicion2;
 			}
 
-			this->EditDataPace(*cpoint);
-			this->PrintData(List);
+			switch (desicion2)
+			{
+			case 'T':
+			case 't':
+				//
+				break;
+			case 'P':
+			case 'p':
+			{
+				bool triger = false;
+				short km;
 
-			break;
+				cout << "Enter kilometr:";
+				cin >> km;
+				while (cpoint == NULL)
+				{
+					while (point->next != NULL)
+					{
+						if (point->distance == km) cpoint = point;
+						point = point->next;
+					}
+					if (cpoint == NULL)
+					{
+						cout << "No relevant distance at list" << endl;
+						cin >> km;
+					}
+				}
+
+				this->EditDataPace(*cpoint);
+				this->PrintData(List);
+
+				break;
+			}
+			default:
+				return;
+			}
+
 		}
-		default:
-			return;
-		}
-
-
 	}
 
 	void RunPerformance::PrintData(RunData& list)
