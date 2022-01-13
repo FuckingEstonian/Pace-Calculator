@@ -19,6 +19,5 @@ int main()
     Athlete.MainMenu();
     system("pause");
 
-   // 
     
 }

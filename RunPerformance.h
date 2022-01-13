@@ -23,11 +23,13 @@ namespace RUN
 		void EditDataPace();
 		void EditDataPace(RunData&);
 		void EditDataTime();
+		void EditDataTime(RunData&);
 
 		void CalculateDistance();
 		void CalculatePace();
 		void CalculateTime();
-		void CalculateListData(RunData&);
+		void CalculateListDataPace(RunData&);
+		void CalculateListDataTime(RunData&);
 
 		bool Check(); /// to check that all data is entered
 		void ListHead();
